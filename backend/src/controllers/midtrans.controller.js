@@ -58,7 +58,7 @@ export default async function midtransNotification(req, res) {
             status = 'PROCESSING';
             statusUpdate = 'PAID';
         } else if (['deny', 'cancel', 'expire'].includes(transactionStatus)) {
-            statusUpdate = 'CANCELLED';
+            statusUpdate = 'CANCELED';
         }
 
         await prisma.orders.update({
@@ -68,13 +68,14 @@ export default async function midtransNotification(req, res) {
             data: {
                 status: status,
                 paymentStatus: statusUpdate,
+                // midtransToken: statusUpdate,
             }
         });
 
-        console.log({
-            msg: 'Notification handled',
-            notification
-        });
+        // console.log({
+        //     msg: 'Notification handled',
+        //     notification
+        // });
         return res.status(200).json({
             msg: 'Notification handled',
             notification

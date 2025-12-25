@@ -38,7 +38,8 @@ model UserAddresses {
   phone       String
   createdAt   DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Orders[] 
 }
 
 model Products {
@@ -56,20 +57,23 @@ model Products {
 }
 
 model Orders {
-  id              String   @id @default(uuid())
+  id              String @id @default(uuid())
   userId          String
+  userAddressesId String @default("")
+
   status          String
-  paymentStatus   String   @default("UNPAID")
+  paymentStatus   String  @default("UNPAID")
   totalAmount     Int
-  // midtransOrderId String?
-  address         String
   notes           String?
   shippingService String?
   trackingNumber  String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  midtransToken   String? @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User          @relation(fields: [userId], references: [id])
+  address UserAddresses @relation(fields: [userAddressesId], references: [id])
   items   Order_Items[]
   payment Payments?
 }
@@ -78,7 +82,6 @@ model Order_Items {
   id        String @id @default(uuid())
   orderId   String
   productId Int
-  // productName  String @default("")
   quantity  Int
   unitPrice Int
   subtotal  Int

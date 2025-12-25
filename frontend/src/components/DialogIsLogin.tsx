@@ -11,8 +11,8 @@ export default function DialogIsLogin() {
 
   if (!isActive) return null
   
-  const token = localStorage.getItem('token')
-  if (token) return null
+  const jwtToken = localStorage.getItem('token')
+  if (jwtToken) return null
 
   return (
     <div className='fixed z-100'>
@@ -26,7 +26,7 @@ export default function DialogIsLogin() {
             <Link to={'/login'}>
               <Button variant='outline' size='lg'> Login </Button>
             </Link>
-            <Link to={'/login'}>
+            <Link to={'/signup'}>
               <Button size='lg'> Sign up </Button>
             </Link>
           </div>

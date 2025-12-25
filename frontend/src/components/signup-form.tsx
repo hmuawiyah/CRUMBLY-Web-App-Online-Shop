@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import {
   Card,
@@ -18,13 +18,39 @@ import {
 
 import { Input } from '@/components/ui/input'
 import { LuSave, LuEye, LuEyeOff } from 'react-icons/lu'
+import { signUp } from '@/service/users.service'
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const [pass, setPass] = useState("")
-  const [pass2, setPass2] = useState("")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [password2, setPassword2] = useState("")
 
   const [showPass, setShowPass] = useState<boolean>(false)
   const [showPass2, setShowPass2] = useState<boolean>(false)
+
+  const navigate = useNavigate()
+
+  const handleSignUp = (
+    e: React.FormEvent<HTMLFormElement>,
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault()
+
+    if (password !== password2) return alert('Password must be the same!')
+
+    try {
+      const res = signUp(name, email, password)
+      if (!res) return
+
+      navigate('/login')
+
+    } catch (error) {
+      console.log('Error: ' + error)
+    }
+  }
 
   return (
     <Card {...props}>
@@ -35,18 +61,26 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={(e) => handleSignUp(e, name, email, password)}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor='name'>Full Name</FieldLabel>
-              <Input id='name' type='text' placeholder='John Doe' required />
+              <Input
+                id='name'
+                type='text'
+                // placeholder='John Doe' 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required />
             </Field>
             <Field>
               <FieldLabel htmlFor='email'>Email</FieldLabel>
               <Input
                 id='email'
                 type='email'
-                placeholder='m@example.com'
+                // placeholder='m@example.com'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Field>
@@ -56,8 +90,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 <Input
                   id="Password"
                   type={showPass ? "text" : "password"}
-                  value={pass}
-                  onChange={(e) => setPass(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="pr-10"
                 />
                 <button
@@ -80,8 +114,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 <Input
                   id="retypePassword"
                   type={showPass2 ? "text" : "password"}
-                  value={pass2}
-                  onChange={(e) => setPass2(e.target.value)}
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
                   className="pr-10"
                 />
                 <button

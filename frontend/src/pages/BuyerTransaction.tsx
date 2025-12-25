@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { LuChevronDown } from "react-icons/lu"
 // import { LuShoppingCart, LuSearch } from 'react-icons/lu'
 // import { FaStar } from 'react-icons/fa6'
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import OrderTransaction from '@/components/OrderTransaction'
+import OrderTransaction, { NoDataOrderTransaction } from '@/components/OrderTransaction'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,49 +17,115 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-import { orders } from '@/components/DummyDataOrdersC'
+import { readAllOrders, readAllOrdersBuyer } from '@/service/order.service'
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
-const SortByDropdownMenu = () => {
-    const [showStatusBar, setShowStatusBar] = useState<Checked>(true)
-    const [sortedBy, setSortedBy] = useState<string>('Lastest')
-    const sortedItems: string[] = ['Lastest', 'Oldest', 'Highest Price', 'Lowest Price']
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className='border border-primary rounded-full'>{sortedBy} <LuChevronDown /></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='start' className="w-56">
-                <DropdownMenuGroup>
-                    {sortedItems.map((item, i) => (
-                        <>
-                            <DropdownMenuItem
-                                onClick={() => setSortedBy(item)}
-                            >
-                                {item}
-                            </DropdownMenuItem>
-                            {(i < sortedItems.length - 1) && <DropdownMenuSeparator />}
-                        </>
-                    ))}
-                </DropdownMenuGroup>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+type itemsProps = {
+    id: string,
+    orderId: string,
+    productId: number,
+    quantity: number,
+    subtotal: number,
+    unitPrice: number,
+    product: { name: string }
 }
 
+type orderProps = {
+    id: string,
+    userId: string,
+    status: string,
+    totalAmount: number,
+    address: string,
+    notes: null
+    paymentStatus: string,
+    shippingService: string,
+    trackingNumber: string,
+    midtransToken: string,
+    items: itemsProps[],
+    createdAt: string,
+    updatedAt: string
+}
 
 export default function BuyerTransaction() {
-    const [radioFilter, setRadioFilter] = useState<string>('All')
-    const radioItems: string[] = ['All', 'Pending', 'Processing', 'Shipped', 'Completed', 'Canceled']
+    const [radioFilter, setRadioFilter] = useState<string>('ALL')
+    const categoriesStatus: string[] = ['ALL', 'WAITING PAYMENT', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'CANCELED']
+    const [orders, setOrders] = useState<orderProps[]>([])
+
+    const [sortedBy, setSortedBy] = useState<string>('LASTEST')
+    const sortedItems: string[] = ['LASTEST', 'OLDEST', 'HIGHEST PRICE', 'LOWEST PRICE']
+
+    useEffect(() => {
+
+        const jwtToken = localStorage.getItem('token')
+        if (!jwtToken) return
+        
+        readAllOrdersBuyer(jwtToken)
+            .then(res => {
+                setOrders(res.data.orders)
+            })
+            .catch(error => {
+                console.log('Error: ' + error)
+            })
+
+    }, [])
+
+    const toTitleCase = (val: string = ''): string => {
+        return val
+            .toLowerCase()
+            .split(' ')
+            .map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            )
+            .join(' ')
+    }
+
+    // let selectedCategory = "All";
+    // let sortOrder = "oldest";
+
+    const applyFilterSort = () => {
+        let filteredOrders = [...orders]
+            .filter(order =>
+                radioFilter === 'ALL'
+                    ? true
+                    : order.status === radioFilter
+            )
+            .slice()
+            .sort((a, b) => {
+                switch (sortedBy) {
+                    case 'OLDEST':
+                        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+
+                    case 'LASTEST':
+                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+                    case 'HIGHEST PRICE':
+                        return b.totalAmount - a.totalAmount;
+
+                    case 'LOWEST PRICE':
+                        return a.totalAmount - b.totalAmount;
+
+                    default:
+                        return 0;
+                }
+            });
+
+        return filteredOrders;
+    }
+
+    const filteredOrders = useMemo(() => applyFilterSort(), [
+        orders,
+        radioFilter,
+        sortedBy,
+    ])
+
+
     return (
         <>
 
             <div className=' flex justify-start w-full space-y-4 overflow-x-auto h-auto mt-15 '>
                 <div className='flex gap-5 min-w-[500px]!'>
-                    {radioItems.map((item: string, i: number) => (
+                    {categoriesStatus.map((item: string, i: number) => (
                         <Button
                             key={i}
                             variant={radioFilter == item ? 'outline' : 'ghost'}
@@ -69,7 +135,7 @@ export default function BuyerTransaction() {
                                 : 'rounded-full opacity-40'
                             }
                         >
-                            {item}
+                            {toTitleCase(item)}
                         </Button>
                     ))}
                 </div>
@@ -78,10 +144,30 @@ export default function BuyerTransaction() {
 
             <div className='flex items-center gap-3 mt-7'>
                 <p>Sort By </p>
-                <SortByDropdownMenu />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className='border border-primary rounded-full'>{toTitleCase(sortedBy)} <LuChevronDown /></Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align='start' className="w-56">
+                        <DropdownMenuGroup>
+                            {sortedItems.map((item, i) => (
+                                <>
+                                    <DropdownMenuItem
+                                        onClick={() => setSortedBy(item)}
+                                    >
+                                        {toTitleCase(item)}
+                                    </DropdownMenuItem>
+                                    {(i < sortedItems.length - 1) && <DropdownMenuSeparator />}
+                                </>
+                            ))}
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
-            <OrderTransaction />
+            <OrderTransaction orders={filteredOrders} setOrders={setOrders} />
+
+            {(filteredOrders.length == 0) && <NoDataOrderTransaction />}
 
         </>
     )

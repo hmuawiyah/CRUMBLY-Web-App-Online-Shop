@@ -6,7 +6,7 @@ import FeatureContent from '@/components/FeatureContent'
 import { Button } from '@/components/ui/button'
 
 import { LuShoppingCart, LuChefHat, LuBadgeCheck, LuAward, LuTruck } from 'react-icons/lu'
-import { getProduct } from '@/service/product.service'
+import { readAllProduct } from '@/service/product.service'
 
 const radioItems: string[] = ['Fresh Arrivals', 'Special Offers', 'Full Menu']
 
@@ -33,7 +33,7 @@ export default function Home() {
 
   useEffect(() => {
 
-    getProduct()
+    readAllProduct()
       .then(res => {
         setDataProduct(res.data.products)
         setFilteredDataProduct(res.data.products)
@@ -76,18 +76,20 @@ export default function Home() {
       <div className='flex justify-center items-center mt-15'>
         <div className='flex flex-wrap justify-start md:justify-center gap-2 md:gap-4 w-full md:w-[80%]'>
           {loading
-            ? [1,2,3,4,5,6].map(() => (
+            ? [1, 2, 3, 4, 5, 6].map(() => (
               <LazyProductCard />
             ))
             : filteredDataProduct.map((product) => (
-                <ProductCard key={product.id} id={product.id} name={product.name} price={product.price} description={product.description} />
-              ))
+              <ProductCard key={product.id} id={product.id} name={product.name} price={product.price} description={product.description} />
+            ))
           }
         </div>
       </div>
 
-      <div className='w-full aspect-16/9 md:h-[350px] bg-gray-400 rounded-lg mt-40'>
-        Ads Delivery
+      <div className='flex justify-center items-center'>
+        <div className='w-[70%] aspect-3/1 h-auto bg-gray-400 rounded-lg mt-40'>
+          Ads Delivery
+        </div>
       </div>
 
       <div className='flex justify-center mt-40'>

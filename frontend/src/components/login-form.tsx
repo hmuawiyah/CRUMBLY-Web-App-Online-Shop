@@ -1,4 +1,9 @@
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { login } from '@/service/auth.service'
+
 import { cn } from '@/lib/utils'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -14,9 +19,8 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Link, useNavigate } from 'react-router-dom'
-import { login } from '@/service/auth.service'
-import { useState } from 'react'
+
+import { LuSave, LuEye, LuEyeOff } from 'react-icons/lu'
 
 export function LoginForm({
   className,
@@ -25,6 +29,8 @@ export function LoginForm({
 
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [showPass, setShowPass] = useState<boolean>(false)
+  
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -77,12 +83,29 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input
+                {/* <Input
                   id='password'
                   type='password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required />
+                  required /> */}
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPass ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                  >
+                    {showPass ? <LuEye /> : <LuEyeOff />}
+                  </button>
+                </div>
               </Field>
               <Field>
                 <Button type='submit'>Login</Button>

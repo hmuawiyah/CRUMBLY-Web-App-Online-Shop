@@ -21,11 +21,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import PayButton from '@/components/PayButton'
+import { PayButton } from '@/components/PayButton'
 import { Input } from '@/components/ui/input'
 
 import { LuCirclePlus, LuCircleMinus, LuTrash2, LuShoppingCart, LuChevronDown, LuCircleX } from 'react-icons/lu'
-import { getUserAddresses } from '@/service/userAddress.service'
+import { readUserAddresses } from '@/service/userAddresses.service'
 
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
@@ -53,10 +53,10 @@ const SortByDropdownMenu = ({ selectAddress, setSelectAddress }: SortByDropdownM
 
   useEffect(() => {
 
-    const token = localStorage.getItem('token')
-    if (!token) return
+    const jwtToken = localStorage.getItem('token')
+    if (!jwtToken) return
 
-    getUserAddresses(token)
+    readUserAddresses(jwtToken)
       .then(res => {
         setUserAddresses((res.data.userAddresses as UserAddress[]))
       })
@@ -116,10 +116,9 @@ type cartViewData = {
 type OrderSummaryProps = {
   cartViewData: cartViewData[]
   totalPrice: number
-  onPay: () => void
 }
 
-export default function OrderSummary({ cartViewData, totalPrice, onPay }: OrderSummaryProps) {
+export default function OrderSummary({ cartViewData, totalPrice }: OrderSummaryProps) {
   const [notes, setNotes] = useState<string>('')
   // const [selectAddress, setSelectAddress] = useState<UserAddress>('')
   const [selectAddress, setSelectAddress] = useState<UserAddress | null>(null)
@@ -132,8 +131,8 @@ export default function OrderSummary({ cartViewData, totalPrice, onPay }: OrderS
             <tbody>
               {cartViewData.map((item, i) => (
                 item.selected && (
-                  <tr key={i} className='border-b'>
-                    <td className='py-1 w-[70%]'>{item.qty}x {item.name}</td><td className='w-[30%]'>Rp {item.subtotal.toLocaleString('id-ID')}</td>
+                  <tr key={i} className='border-b '>
+                    <td className='py-1 w-[70%] truncate'>{item.qty}x {item.name}</td><td className='w-[30%]'>Rp {item.subtotal.toLocaleString('id-ID')}</td>
                   </tr>
                 )
               ))}

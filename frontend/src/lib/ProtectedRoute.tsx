@@ -6,10 +6,10 @@ type ProtectedRouteProps = {
 }
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ role }) => {
-    const token = localStorage.getItem('token')
+    const jwtToken = localStorage.getItem('token')
     const userRole = localStorage.getItem('role') as 'buyer' | 'admin' | null
 
-    if (!token) return <Navigate to="/login" replace />
+    if (!jwtToken) return <Navigate to="/login" replace />
     if (role && role !== userRole) return <Navigate to="/" replace />
 
     return <Outlet />

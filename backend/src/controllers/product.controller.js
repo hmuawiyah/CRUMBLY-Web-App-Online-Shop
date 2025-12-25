@@ -19,9 +19,9 @@ export const createProduct = async (req, res) => {
             },
         });
 
-        console.log({
-            product
-        });
+        // console.log({
+        //     product
+        // });
         return res.status(201).json({
             msg: "success create product!",
             product
@@ -33,7 +33,7 @@ export const createProduct = async (req, res) => {
     }
 };
 
-export const getProductByIds = async (req, res) => {
+export const readProductByIds = async (req, res) => {
     try {
         const {
             ids
@@ -68,13 +68,13 @@ export const readProduct = async (req, res) => {
     try {
         const product = await prisma.products.findUnique({
             where: {
-                id
+                id: Number(id)
             },
         });
 
-        console.log({
-            product
-        });
+        // console.log({
+        //     product
+        // });
         return res.status(200).json({
             msg: "success get product!",
             product
@@ -90,9 +90,9 @@ export const readAllProduct = async (req, res) => {
     try {
         const products = await prisma.products.findMany();
 
-        console.log({
-            products
-        });
+        // console.log({
+        //     products
+        // });
         return res.status(200).json({
             msg: "success get all products!",
             products
@@ -130,9 +130,9 @@ export const updateProduct = async (req, res) => {
             },
             data: updateData,
         });
-        console.log({
-            product
-        });
+        // console.log({
+        //     product
+        // });
         return res.status(200).json({
             msg: "success update product!",
             product
@@ -155,9 +155,9 @@ export const deleteProduct = async (req, res) => {
             },
         });
 
-        console.log({
-            product
-        });
+        // console.log({
+        //     product
+        // });
         return res.status(200).json({
             msg: "success delete product!",
             product

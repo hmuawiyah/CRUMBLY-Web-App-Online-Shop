@@ -38,7 +38,7 @@ export default function Footer() {
                 </div>
 
                 <div className='flex-col md:flex-row flex justify-start md:justify-between items-start md:items-end mt-20'>
-                    <p className='text-5xl font-bold -tracking-[3px]'>BreadFree</p>
+                    <p className='text-5xl font-bold -tracking-[3px]'>CRUMBLY</p>
                     <p className='text-sm opacity-50 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
                 </div>
             </div>

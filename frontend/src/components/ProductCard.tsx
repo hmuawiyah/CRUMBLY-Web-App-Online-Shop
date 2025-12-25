@@ -15,6 +15,7 @@ import {
 
 import { LuShoppingCart } from 'react-icons/lu'
 import { FaStar } from 'react-icons/fa6'
+import { useNavigate } from 'react-router-dom'
 
 type ProductCardProps = {
   id: number,
@@ -22,6 +23,8 @@ type ProductCardProps = {
   price: number,
   description: string,
 }
+
+
 
 export const LazyProductCard = () => {
   return (
@@ -40,12 +43,13 @@ export const LazyProductCard = () => {
 }
 
 export default function ProductCard({ id, name, price, description }: ProductCardProps) {
-const { items, addToCart } = useCartStore()
+  const navigate = useNavigate()
+  const { items, addToCart } = useCartStore()
   return (
     <Card className="w-[48%] lg:w-[30%] xl:w-[25%] mt-4">
       <CardHeader>
-        <div className='w-full aspect-square bg-gray-400 rounded-md'></div>
-        <CardTitle className='truncate'>{name}</CardTitle>
+        <div className='w-full aspect-square bg-gray-400 rounded-md cursor-pointer' onClick={() => navigate(`/product/${id}`)}></div>
+        <CardTitle className='truncate cursor-pointer' onClick={() => navigate(`/product/${id}`)}>{name}</CardTitle>
         <CardDescription> Rp {price.toLocaleString('id-ID')} </CardDescription>
         <CardDescription className='text-sm md:text-base font-normal truncate'>{description}</CardDescription>
       </CardHeader>

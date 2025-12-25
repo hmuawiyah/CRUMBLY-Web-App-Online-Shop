@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import useCartStore from '@/store/cart.store'
 
-import OrderCart, { NoDataOrderCart } from '@/components/OrderCart'
+import OrderCart, { LazyOrderCart, NoDataOrderCart } from '@/components/OrderCart'
 import OrderSummary from '@/components/OrderSummary'
-import { getProductsByIds } from '@/service/product.service'
+import { readProductByIds } from '@/service/product.service'
 
 import { Button } from '@/components/ui/button'
 
@@ -14,7 +14,9 @@ type Product = {
   imageUrl: string
 }
 
+
 export default function BuyerCart() {
+  // const [loadingProducts, setLoadingProducts] = useState(true)
   const cartItems = useCartStore(state => state.items ?? [])
   const { increaseQty, decreaseQty, toggleSelect, selectAll, unselectAll } = useCartStore()
 
@@ -23,20 +25,22 @@ export default function BuyerCart() {
   const productIds = cartItems.map(i => i.id)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    const jwtToken = localStorage.getItem('token')
+    if (!jwtToken) return
     if (productIds.length === 0) {
       setProducts([])
       return
     }
 
-    getProductsByIds(token, productIds)
+    readProductByIds(jwtToken, productIds)
       .then(res => {
         setProducts(res.data)
       })
       .catch(err => {
+        alert('gagal')
         console.error(err)
       })
+      // .finally(() => setLoadingProducts(false))
 
   }, [cartItems])
 
@@ -81,19 +85,9 @@ export default function BuyerCart() {
     for (let i = 0; i < item.qty; i++) decreaseQty(id)
   }
 
-  const handlePay = () => {
-    const payload = {
-      items: cartItems
-        .filter(i => i.selected)
-        .map(i => ({ id: i.id, qty: i.qty })),
-      notes: 'optional',
-    }
-    alert('Dummy payment payload: ' + JSON.stringify(payload))
-  }
-
   return (
     <div className="flex flex-wrap md:flex-nowrap justify-between w-full mt-15 gap-6">
-    {/* <div className="flex justify-center mt-15"> */}
+      {/* <div className="flex justify-center mt-15"> */}
       <div className="w-full md:w-[70%] space-y-4">
 
         <div className="flex items-center gap-3">
@@ -102,29 +96,32 @@ export default function BuyerCart() {
         </div>
 
         <div className="space-y-4">
-          {/* <Button onClick={() => { alert(JSON.stringify(cartViewData)) }}>lihat cartViewData</Button>
-          <Button onClick={() => { alert(JSON.stringify(productIds)) }}>lihat products</Button> */}
-          
-          {cartViewData.map(item => (
-            <OrderCart
-              key={item.id}
-              item={item}
-              onQty={handleQty}
-              onRemove={handleRemove}
-              onToggle={handleToggle}
-            />
-          ))}
-          {cartViewData.length === 0
-            ? <NoDataOrderCart />
-            : ''
-          }
+
+          <Button onClick={() => {alert(products)}}>products</Button>
+
+          {cartViewData.length > 0 && (
+            cartViewData.map(item => (
+              <OrderCart
+                key={item.id}
+                item={item}
+                onQty={handleQty}
+                onRemove={handleRemove}
+                onToggle={handleToggle}
+              />
+            ))
+          )}
+
+          {cartViewData.length === 0 && (
+            <NoDataOrderCart />
+          )}
+
         </div>
       </div>
 
 
       <div className="w-full md:w-[30%]">
         {/* <div>asd</div> */}
-        <OrderSummary cartViewData={cartViewData} totalPrice={totalPrice} onPay={handlePay} />
+        <OrderSummary cartViewData={cartViewData} totalPrice={totalPrice} />
       </div>
     </div>
   )

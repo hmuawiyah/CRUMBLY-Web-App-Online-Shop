@@ -61,24 +61,26 @@ export const createOrder = async (req, res) => {
             totalAmount += subtotal;
         }
 
+        // console.log('[order.controller.js] setelah for of')
+
         itemsDataForMidtrans.push({
             id: 'SHIPPING',
             price: shippingFee,
             quantity: 1,
             name: 'Shipping Fee'
         });
+        // console.log('[order.controller.js] setelah itemsDataForMidtrans')
 
 
-        // totalAmount += shippingFee
-
-
-        const order = await prisma.orders.create({
+        // try {
+        let order = await prisma.orders.create({
             data: {
                 userId: req.user.id,
                 status: 'WAITING PAYMENT',
                 totalAmount: totalAmount + shippingFee,
-                address: address.street,
+                userAddressesId: address.id,
                 notes,
+                midtransToken: '',
                 items: {
                     create: itemsData
                 }
@@ -87,8 +89,12 @@ export const createOrder = async (req, res) => {
                 items: true
             }
         });
+        console.log('[order.controller.js] setelah let order')
+        // } catch (error) {
+        //     console.log("Error: " + error)
+        // }
 
-
+        // totalAmount += shippingFee        
         // const midtransOrderId = `BREADFREE-${order.id}`;
 
         const parameter = {
@@ -120,7 +126,7 @@ export const createOrder = async (req, res) => {
                 },
                 shipping_address: {
                     first_name: req.user.name,
-                    last_name: '',
+                    last_name: '-',
                     email: req.user.email,
                     phone: address.phone,
                     address: address.street,
@@ -130,15 +136,27 @@ export const createOrder = async (req, res) => {
                 }
             }
         };
+        // console.log('[order.controller.js] setelah let parameter')
 
         const snapRes = await snap.createTransaction(parameter);
+        // console.log('[order.controller.js] setelah snapRes')
 
-        console.log({
-            msg: 'success create order!',
-            order,
-            transactionToken: snapRes.token,
-            snapRes: snapRes
+        order = await prisma.orders.update({
+            where: {
+                id: order.id
+            },
+            data: {
+                midtransToken: snapRes.token,
+            },
         });
+        // console.log('[order.controller.js] setelah order = await prisma.orders.update')
+
+        // console.log({
+        //     msg: 'success create order!',
+        //     order,
+        //     transactionToken: snapRes.token,
+        //     snapRes: snapRes
+        // });
         return res.status(201).json({
             msg: 'success create order!',
             order,
@@ -161,14 +179,66 @@ export const readOrder = async (req, res) => {
             where: {
                 id
             },
+            include: {
+                items: {
+                    include: {
+                        product: true,
+                    }
+                },
+                address: true,
+                user: {
+                    select: {
+                        name: true
+                    },
+                },
+            }
             // include: { items: true, payment: true }
         });
+
+        if (!order) {
+            console.log('!order')
+            return res.status(404).json({
+                msg: 'Order not found',
+            });
+        }
+        
         console.log({
             order
         });
+
         return res.status(200).json({
             msg: 'success get order!',
             order
+        });
+    } catch (err) {
+        return res.status(400).json({
+            error: err.message,
+            // idNya: id
+        });
+    }
+};
+
+export const readAllOrders = async (req, res) => {
+    try {
+        const orders = await prisma.orders.findMany({
+            include: {
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        // console.log({
+        //     orders
+        // });
+        return res.status(200).json({
+            msg: 'success get all orders!',
+            orders
         });
     } catch (err) {
         return res.status(500).json({
@@ -177,12 +247,27 @@ export const readOrder = async (req, res) => {
     }
 };
 
-export const readAllOrders = async (req, res) => {
+export const readAllOrdersBuyer = async (req, res) => {
     try {
-        const orders = await prisma.orders.findMany();
-        console.log({
-            orders
+        const orders = await prisma.orders.findMany({
+            where: {
+                userId: req.user.id,
+            },
+            include: {
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
         });
+        // console.log({
+        //     orders
+        // });
         return res.status(200).json({
             msg: 'success get all orders!',
             orders
@@ -220,9 +305,9 @@ export const updateOrder = async (req, res) => {
             },
             data: updateData,
         });
-        console.log({
-            order
-        });
+        // console.log({
+        //     order
+        // });
         return res.status(201).json({
             msg: 'success update order!',
             order
@@ -261,25 +346,25 @@ export const cancelOrder = async (req, res) => {
         // Cancel di Midtrans
         try {
             const cancelRes = await coreApi.cancelTransaction(order.id);
-            console.log('Midtrans cancel response:', cancelRes);
+            // console.log('Midtrans cancel response:', cancelRes);
         } catch (err) {
             console.warn('Midtrans cancel failed, order might not be paid yet:', err.message);
             // Optional: tetap update DB meskipun cancel gagal
         }
 
         // Update DB
-        const cancelledOrder = await prisma.orders.update({
+        const canceledOrder = await prisma.orders.update({
             where: {
                 id
             },
             data: {
-                status: 'CANCELLED'
+                status: 'CANCELED'
             }
         });
 
         return res.status(200).json({
             msg: 'Order cancelled',
-            order: cancelledOrder
+            order: canceledOrder
         });
     } catch (err) {
         return res.status(500).json({

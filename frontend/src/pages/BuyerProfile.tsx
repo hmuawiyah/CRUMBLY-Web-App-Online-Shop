@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import ProfileMyProfile from '@/components/ProfileMyProfile'
 import ProfilePersonalInfo from '@/components/ProfilePersonalInfo'
 import ProfileAddress from '@/components/ProfileAddress'
 import ProfilePassword from '@/components/ProfilePassword'
@@ -30,6 +31,13 @@ export default function BuyerProfile() {
       <div className='flex flex-wrap justify-center w-full mt-15 gap-5'>
 
         <div className='space-y-5 w-full md:w-[40%]'>
+          <ProfileMyProfile/>
+          <ProfilePersonalInfo />
+          <ProfilePassword />
+        </div>
+
+        <div className='space-y-5 w-full md:w-[50%]'>
+          <ProfileAddress />
           <Card className='px-2 md:px-4'>
             <CardContent className='flex items-center justify-between px-2 md:px-4 gap-2 '>
               <div>
@@ -39,11 +47,6 @@ export default function BuyerProfile() {
               <Button variant={'outlineDestructive'} onClick={() => handleLogout()}><LuLogOut /> Logout</Button>
             </CardContent>
           </Card>
-          <ProfilePersonalInfo />
-          <ProfilePassword />
-        </div>
-        <div className='w-full md:w-[50%]'>
-          <ProfileAddress />
         </div>
 
       </div>
