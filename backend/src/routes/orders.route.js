@@ -1,5 +1,5 @@
 import express from 'express';
-import { cancelOrder, createOrder, readAllOrders, readAllOrdersBuyer, readOrder, updateOrder } from '../controllers/orders.controller.js';
+import { cancelOrder, checkExpiredOrder, createOrder, readAllOrders, readAllOrdersBuyer, readOrder, updateOrder } from '../controllers/orders.controller.js';
 import auth from '../middleware/auth.js';
 import authorizeRole from '../middleware/authorizeRole.js';
 
@@ -11,6 +11,8 @@ router.get('/:id', auth, readOrder);
 router.post('/create', auth, createOrder);
 router.put('/update/:id', auth, updateOrder);
 router.delete('/delete/:id',auth, cancelOrder);
+
+router.post('/check', auth, checkExpiredOrder);
 // router.delete('/delete/:id',auth, authorizeRole("ADMIN"), deleteOrder);
 
 export default router;

@@ -11,6 +11,9 @@ export default async function midtransNotification(req, res) {
     try {
 
         const notification = req.body;
+        console.log({
+            notification
+        })
 
         const orderId = notification.order_id;
         const transactionStatus = notification.transaction_status;

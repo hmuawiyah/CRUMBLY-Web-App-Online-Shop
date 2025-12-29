@@ -61,7 +61,6 @@ export const createOrder = async (req, res) => {
             totalAmount += subtotal;
         }
 
-        // console.log('[order.controller.js] setelah for of')
 
         itemsDataForMidtrans.push({
             id: 'SHIPPING',
@@ -69,10 +68,8 @@ export const createOrder = async (req, res) => {
             quantity: 1,
             name: 'Shipping Fee'
         });
-        // console.log('[order.controller.js] setelah itemsDataForMidtrans')
 
 
-        // try {
         let order = await prisma.orders.create({
             data: {
                 userId: req.user.id,
@@ -90,12 +87,7 @@ export const createOrder = async (req, res) => {
             }
         });
         console.log('[order.controller.js] setelah let order')
-        // } catch (error) {
-        //     console.log("Error: " + error)
-        // }
 
-        // totalAmount += shippingFee        
-        // const midtransOrderId = `BREADFREE-${order.id}`;
 
         const parameter = {
             transaction_details: {
@@ -106,6 +98,7 @@ export const createOrder = async (req, res) => {
             credit_card: {
                 secure: true
             },
+
 
             item_details: itemsDataForMidtrans,
 
@@ -136,10 +129,8 @@ export const createOrder = async (req, res) => {
                 }
             }
         };
-        // console.log('[order.controller.js] setelah let parameter')
 
         const snapRes = await snap.createTransaction(parameter);
-        // console.log('[order.controller.js] setelah snapRes')
 
         order = await prisma.orders.update({
             where: {
@@ -149,14 +140,7 @@ export const createOrder = async (req, res) => {
                 midtransToken: snapRes.token,
             },
         });
-        // console.log('[order.controller.js] setelah order = await prisma.orders.update')
 
-        // console.log({
-        //     msg: 'success create order!',
-        //     order,
-        //     transactionToken: snapRes.token,
-        //     snapRes: snapRes
-        // });
         return res.status(201).json({
             msg: 'success create order!',
             order,
@@ -192,7 +176,6 @@ export const readOrder = async (req, res) => {
                     },
                 },
             }
-            // include: { items: true, payment: true }
         });
 
         if (!order) {
@@ -201,7 +184,7 @@ export const readOrder = async (req, res) => {
                 msg: 'Order not found',
             });
         }
-        
+
         console.log({
             order
         });
@@ -213,7 +196,6 @@ export const readOrder = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             error: err.message,
-            // idNya: id
         });
     }
 };
@@ -233,9 +215,6 @@ export const readAllOrders = async (req, res) => {
                 }
             }
         });
-        // console.log({
-        //     orders
-        // });
         return res.status(200).json({
             msg: 'success get all orders!',
             orders
@@ -265,9 +244,6 @@ export const readAllOrdersBuyer = async (req, res) => {
                 }
             }
         });
-        // console.log({
-        //     orders
-        // });
         return res.status(200).json({
             msg: 'success get all orders!',
             orders
@@ -305,9 +281,6 @@ export const updateOrder = async (req, res) => {
             },
             data: updateData,
         });
-        // console.log({
-        //     order
-        // });
         return res.status(201).json({
             msg: 'success update order!',
             order
@@ -322,11 +295,10 @@ export const updateOrder = async (req, res) => {
 export const cancelOrder = async (req, res) => {
     const {
         id
-    } = req.params; // order UUID
+    } = req.params;
     const userId = req.user.id;
 
     try {
-        // Ambil order dulu
         const order = await prisma.orders.findUnique({
             where: {
                 id
@@ -343,16 +315,12 @@ export const cancelOrder = async (req, res) => {
             msg: 'Order cannot be cancelled'
         });
 
-        // Cancel di Midtrans
         try {
             const cancelRes = await coreApi.cancelTransaction(order.id);
-            // console.log('Midtrans cancel response:', cancelRes);
         } catch (err) {
             console.warn('Midtrans cancel failed, order might not be paid yet:', err.message);
-            // Optional: tetap update DB meskipun cancel gagal
         }
 
-        // Update DB
         const canceledOrder = await prisma.orders.update({
             where: {
                 id
@@ -372,3 +340,62 @@ export const cancelOrder = async (req, res) => {
         });
     }
 };
+
+export const checkExpiredOrder = async (req, res) => {
+    const {
+        midtransToken
+    } = req.body
+
+    try {
+        const order = await prisma.orders.findFirst({
+            where: {
+                midtransToken: midtransToken
+            }
+        })
+
+        if (!order) return alert('There is no order')
+
+        const createdAt = new Date(order.createdAt);
+        const now = new Date();
+
+        const isMoreThan24Hours = now - createdAt > 24 * 60 * 60 * 1000;
+
+        if (isMoreThan24Hours) {
+
+            try {
+                const cancelRes = await coreApi.cancelTransaction(order.id);
+            } catch (err) {
+                console.warn('Midtrans cancel failed, order might not be paid yet:', err.message);
+            }
+
+            const canceledOrder = await prisma.orders.update({
+                where: {
+                    id: order.id
+                },
+                data: {
+                    status: 'CANCELED'
+                }
+            });
+
+            return res.status(200).json({
+                msg: 'Order cancelled',
+                orderId: order.id,
+                isExpired: true
+            });
+        } else {
+            console.log('Belum 24 jam');
+
+            return res.status(200).json({
+                msg: 'Let\'s pay the order',
+                orderId: order.id,
+                isExpired: false
+            });
+        }
+
+
+    } catch (error) {
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+}
