@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Link, useNavigate } from 'react-router-dom'
 
+import toast from 'react-hot-toast'
+
 import {
   Card,
   CardContent,
@@ -19,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { LuSave, LuEye, LuEyeOff } from 'react-icons/lu'
 import { signUp } from '@/service/users.service'
+import { isEmail } from '@/helper/simpleFn'
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [name, setName] = useState("")
@@ -38,17 +41,22 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     password: string
   ) => {
     e.preventDefault()
+    // alert(JSON.stringify({name, email, password}))
 
-    if (password !== password2) return alert('Password must be the same!')
+    if (!isEmail(email)) return toast.error('Please input the correct email')
+    if (password.length < 8) return toast.error('Password must be at least 8 characters long')
+    if (password !== password2) return toast.error('Password must be the same')
+    if ((name || email || password) == null) return toast.error('All fields must be filled in')
 
     try {
       const res = signUp(name, email, password)
       if (!res) return
-
+      toast.success('Success to Create Account!')
       navigate('/login')
 
     } catch (error) {
       console.log('Error: ' + error)
+      toast.error('Failed to Create Account!')
     }
   }
 
@@ -68,7 +76,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Input
                 id='name'
                 type='text'
-                // placeholder='John Doe' 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required />
@@ -78,7 +85,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Input
                 id='email'
                 type='email'
-                // placeholder='m@example.com'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

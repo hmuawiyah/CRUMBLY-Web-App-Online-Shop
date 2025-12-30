@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import useCartStore from '@/store/cart.store'
 
-import OrderCart, { LazyOrderCart, NoDataOrderCart } from '@/components/OrderCart'
-import OrderSummary from '@/components/OrderSummary'
+import OrderCart, { LazyOrderCart, NoDataOrderCart } from '@/components/PageCart/OrderCart'
+import OrderSummary, { LazyOrderSummary } from '@/components/PageCart/OrderSummary'
 import { readProductByIds } from '@/service/product.service'
 
 import { Button } from '@/components/ui/button'
@@ -14,9 +14,8 @@ type Product = {
   imageUrl: string
 }
 
-
 export default function BuyerCart() {
-  // const [loadingProducts, setLoadingProducts] = useState(true)
+  const [loadingProducts, setLoadingProducts] = useState(true)
   const cartItems = useCartStore(state => state.items ?? [])
   const { increaseQty, decreaseQty, toggleSelect, selectAll, unselectAll } = useCartStore()
 
@@ -29,6 +28,7 @@ export default function BuyerCart() {
     if (!jwtToken) return
     if (productIds.length === 0) {
       setProducts([])
+      setLoadingProducts(false)
       return
     }
 
@@ -37,10 +37,10 @@ export default function BuyerCart() {
         setProducts(res.data)
       })
       .catch(err => {
-        alert('gagal')
+        alert('Failed fetching data')
         console.error(err)
       })
-      // .finally(() => setLoadingProducts(false))
+      .finally(() => setLoadingProducts(false))
 
   }, [cartItems])
 
@@ -87,7 +87,6 @@ export default function BuyerCart() {
 
   return (
     <div className="flex flex-wrap md:flex-nowrap justify-between w-full mt-15 gap-6">
-      {/* <div className="flex justify-center mt-15"> */}
       <div className="w-full md:w-[70%] space-y-4">
 
         <div className="flex items-center gap-3">
@@ -97,9 +96,13 @@ export default function BuyerCart() {
 
         <div className="space-y-4">
 
-          <Button onClick={() => {alert(products)}}>products</Button>
+          {/* <Button onClick={() => { alert(cartViewData.length) }}>cartViewData</Button> */}
 
-          {cartViewData.length > 0 && (
+          {loadingProducts && (
+            <LazyOrderCart />
+          )}
+
+          {!loadingProducts && cartViewData.length > 0 && (
             cartViewData.map(item => (
               <OrderCart
                 key={item.id}
@@ -111,7 +114,7 @@ export default function BuyerCart() {
             ))
           )}
 
-          {cartViewData.length === 0 && (
+          {!loadingProducts && cartViewData.length === 0 && (
             <NoDataOrderCart />
           )}
 
@@ -120,8 +123,13 @@ export default function BuyerCart() {
 
 
       <div className="w-full md:w-[30%]">
-        {/* <div>asd</div> */}
-        <OrderSummary cartViewData={cartViewData} totalPrice={totalPrice} />
+        {loadingProducts && (
+          <LazyOrderSummary />
+        )}
+
+        {!loadingProducts && cartViewData.length >= 0 && (
+          <OrderSummary cartViewData={cartViewData} totalPrice={totalPrice} />
+        )}
       </div>
     </div>
   )

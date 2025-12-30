@@ -15,9 +15,12 @@ const LoginSignUpLayout: React.FC<LoginSignUpLayoutProps> = ({ children }) => {
       <Navbar />
 
       <PageWrapper>
+        {/* <div className='max-w-[1920px] mx-4 md:mx-8 lg:mx-30'> */}
         {children}
+        {/* </div> */}
       </PageWrapper>
 
+      <div className="mt-20"></div>
       <Footer />
       <NavbarBottom />
     </>

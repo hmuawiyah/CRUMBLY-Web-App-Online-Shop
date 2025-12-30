@@ -13,8 +13,8 @@ export default function NavbarBottom() {
     const { menuClicked, setMenuClicked } = useStore()
     return (
         <>
-            <footer className='sticky w-full bottom-0 left-0 z-100 bg-gray-200 md:hidden'>
-                <div className='flex items-center justify-between px-4 [&_Button]:rounded-md [&_Button]:w-15 [&_Button]:h-15 pb-5'>
+            <footer className='sticky w-full bottom-0 left-0 z-100 shadow-[0_-1px_10px_0_rgba(0,0,0,0.2)] bg-white md:hidden'>
+                <div className='flex items-center justify-between px-4 [&_Button]:rounded-md [&_Button]:w-15 [&_Button]:h-15 pb-5 text-muted-foreground'>
                     <Link to={'/'}> <Button variant='ghost' onClick={() => setMenuClicked('home')}>
                         {menuClicked == 'home'
                             ? <IoHome className='w-7! h-7!' />

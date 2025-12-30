@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import useCartStore from '@/store/cart.store'
 
+import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,8 +15,15 @@ import {
 } from "@/components/ui/card"
 
 import { LuCirclePlus, LuCircleMinus, LuTrash2, LuShoppingCart } from 'react-icons/lu'
+import toast from 'react-hot-toast'
 
-const OrderSubtotal = ({ id, name, price }) => {
+type OrderSubtotalProps = {
+  id: number
+  name: string
+  price: number
+}
+
+export default function OrderSubtotal({ id, name, price }: OrderSubtotalProps) {
   const { addToCartMany } = useCartStore()
 
   const [qty, setQty] = useState<number>(1)
@@ -33,7 +42,6 @@ const OrderSubtotal = ({ id, name, price }) => {
 
   return (
     <>
-      {/* <Button onClick={() => alert(JSON.stringify(price))}>price</Button> */}
       <Card className="flex gap-5 sticky top-20! overflow-hidden mt-4">
         <CardHeader>
           <CardTitle className='text-2xl'>Subtotal</CardTitle>
@@ -54,10 +62,11 @@ const OrderSubtotal = ({ id, name, price }) => {
               </div>
             </div>
 
-            <Button variant='default' onClick={() => addToCartMany({ id, name, qty })} className='flex-1 w-full'> <LuShoppingCart /> Add to Cart </Button>
+            <Button variant='default' onClick={() => {addToCartMany({ id, name, qty }); toast.success('item added!') }} className='flex-1 w-full'> <LuShoppingCart /> Add to Cart </Button>
 
           </div>
-          <Button variant='outline' className='w-full'> Continue to payment </Button>
+          
+          <Link to={'/cart'} className='w-full'><Button variant='outline' className='w-full'> Continue to payment </Button> </Link>
         </CardFooter>
       </Card>
 
@@ -65,4 +74,23 @@ const OrderSubtotal = ({ id, name, price }) => {
   )
 }
 
-export default OrderSubtotal
+export const LazyOrderSubtotal = () => {
+  return (
+    <Card className="flex gap-5 sticky top-20! overflow-hidden mt-4">
+      <CardHeader>
+        <Skeleton className='w-30 h-5 bg-gray-300 rounded-full' />
+        <Skeleton className='w-50 h-7 bg-gray-300 rounded-full mt-2' />
+      </CardHeader>
+      <CardFooter className="flex-col gap-2">
+        <div className="flex flex-col xl:flex-row items-center gap-3 w-full">
+
+          <Skeleton className='w-1/3 h-7 bg-gray-300 rounded-full mt-2' />
+          <Skeleton className='w-2/3 h-7 bg-gray-300 rounded-full mt-2' />
+
+        </div>
+        <Skeleton className='w-full h-7 bg-gray-300 rounded-full mt-2' />
+      </CardFooter>
+    </Card>
+  )
+}
+

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { dummyCartType as DC } from '@/components/DummyDataCart'
+import { dummyCartType as DC } from '@/components/DummyData/DummyDataCart'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -37,16 +37,27 @@ export const LazyOrderCart = () => (
         <input type='checkbox' className='w-4 h-4' />
         <div className='flex-1'>
           <div className='flex gap-3'>
-            <Skeleton className='aspect-square w-20 h-20 bg-gray-200 rounded-md' />
+            <Skeleton className='aspect-square w-20 h-20 bg-gray-300 rounded-md' />
             <div className='flex flex-col justify-between w-full'>
               <div>
-                <Skeleton className='w-32 h-4 bg-gray-200 rounded-full' />
-                <Skeleton className='w-24 h-4 bg-gray-200 rounded-full mt-2' />
+                <Skeleton className='w-32 h-4 bg-gray-300 rounded-full' />
+                <Skeleton className='w-24 h-4 bg-gray-300 rounded-full mt-2' />
               </div>
-              <Skeleton className='w-24 h-4 bg-gray-200 rounded-full mt-2 text-right' />
+              <div className='flex justify-end'>
+                <Skeleton className='w-24 h-4 bg-gray-300 rounded-full mt-2 text-right' />
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    </CardContent>
+
+    <hr className='my-2 md:my-4 border border-gray-200' />
+
+    <CardContent className='px-2 md:px-4'>
+      <div className='flex justify-between'>
+        <Skeleton className='w-38 h-4 bg-gray-300 rounded-full' />
+        <Skeleton className='w-42 h-4 bg-gray-300 rounded-full mt-2' />
       </div>
     </CardContent>
   </Card>

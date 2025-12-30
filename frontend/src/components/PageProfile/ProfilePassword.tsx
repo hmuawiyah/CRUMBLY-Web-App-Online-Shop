@@ -15,6 +15,8 @@ import {
 
 import { LuSave, LuEye, LuEyeOff } from 'react-icons/lu'
 import { updateUser } from '@/service/users.service'
+import toast from 'react-hot-toast'
+import { Skeleton } from '../ui/skeleton'
 
 export default function ProfilePassword() {
     const [pass, setPass] = useState('')
@@ -29,11 +31,12 @@ export default function ProfilePassword() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        if (pass !== pass2) return
+        if (pass.length < 8) return toast.error('Password must be at least 8 characters long')
+        if (pass !== pass2) return toast.error('Password must be the same')
 
         await updateUser(jwtToken, '', '', pass)
             .then(() => {
-                alert('Success update password!')
+                toast.success('Success update password!')
             })
             .finally(() => {
                 setPass('')
@@ -54,7 +57,7 @@ export default function ProfilePassword() {
                 </CardHeader>
 
                 <CardContent className='space-y-4 px-2 md:px-4'>
-                    <label htmlFor='password'>Password</label>
+                    <label htmlFor='password'>Type Password</label>
                     <div className='relative'>
                         <Input
                             id='password'
@@ -72,6 +75,8 @@ export default function ProfilePassword() {
                             {showPass ? <LuEye /> : <LuEyeOff />}
                         </button>
                     </div>
+
+                    <div className='text-black/50 mt-1'>Must be at least 8 characters long.</div>
 
                     <label htmlFor='retypePassword'>Retype Password</label>
                     <div className='relative'>
@@ -92,6 +97,8 @@ export default function ProfilePassword() {
                         </button>
                     </div>
 
+                    <div className='text-black/50 mt-1'>Please confirm your password.</div>
+
                 </CardContent>
 
                 <CardFooter className='flex justify-end gap-4'>
@@ -100,5 +107,29 @@ export default function ProfilePassword() {
                 </CardFooter>
             </Card>
         </form>
+    )
+}
+
+export const LazyProfilePassword = () => {
+    return (
+        <>
+            <Card className='space-y-6 px-2 md:px-4'>
+                <CardHeader>
+                    <Skeleton className='w-30 h-5 bg-gray-300 rounded-full' />
+                </CardHeader>
+
+                <CardContent className='space-y-4 px-2 md:px-4'>
+                    <Skeleton className='w-35 h-4 bg-gray-300 rounded-full' />
+                    <Skeleton className='w-full h-4 bg-gray-300 rounded-full' />
+                    <Skeleton className='w-35 h-4 bg-gray-300 rounded-full' />
+                    <Skeleton className='w-full h-4 bg-gray-300 rounded-full' />
+                </CardContent>
+
+                <CardFooter className='flex justify-end gap-4'>
+                    <Skeleton className='w-15 h-6 bg-gray-300 rounded-full' />
+                    <Skeleton className='w-25 h-6 bg-gray-300 rounded-full' />
+                </CardFooter>
+            </Card>
+        </>
     )
 }

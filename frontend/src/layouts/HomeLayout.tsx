@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import PageWrapper from '@/components/PageWrapper'
 import Navbar from '@/components/Navbar'
-import AdsCarousel from '@/components/AdsCarousel'
+import AdsCarousel from '@/components/PageHome/AdsCarousel'
 import Footer from '@/components/Footer'
 import NavbarBottom from '@/components/NavbarBottom'
 import DialogIsLogin from '@/components/DialogIsLogin'
@@ -23,6 +23,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ children }) => {
         {children}
       </PageWrapper>
 
+      <div className="mt-20 md:mt-40"></div>
       <Footer />
       <NavbarBottom />
     </>

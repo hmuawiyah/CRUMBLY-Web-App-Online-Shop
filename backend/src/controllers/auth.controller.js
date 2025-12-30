@@ -42,10 +42,10 @@ export const login = async (req, res) => {
                 email,
             },
         })
-        if(!user){ return res.status(400).json({ msg:"Email or password is wrong! abc"}); }
+        if(!user){ return res.status(400).json({ msg:"Email or password is wrong!"}); }
         
         const isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch){ return res.status(400).json({ msg:"Email or password is wrong! 123"}); }
+        if(!isMatch){ return res.status(400).json({ msg:"Email or password is wrong!"}); }
     
         const token = jwt.sign({ id: user.id}, process.env.JWT_SECRET, { expiresIn: "1d" });
         return res.json({ token, user });

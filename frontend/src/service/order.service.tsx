@@ -52,4 +52,10 @@ export const cancelOrder = async (token: string, id: string) => {
     return await axios.delete(`${API_URL}/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     })
-} 
+}
+
+export const checkExpiredOrder = async (token: string, midtransToken: string) => {
+    return await axios.post(`${API_URL}/check`, { midtransToken }, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+}

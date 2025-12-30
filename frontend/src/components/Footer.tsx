@@ -5,12 +5,12 @@ import { FaSquareFacebook, FaSquareXTwitter, FaSquareInstagram, FaTiktok } from 
 
 export default function Footer() {
     return (
-        <div className='w-full bg-gray-400 mt-40'>
+        <div className='w-full bg-gray-200'>
             <div className='max-w-[1920px] mx-4 md:mx-8 lg:mx-30 py-10'>
                 <div className='grid grid-cols-12 gap-3'>
                     <div className='col-span-6 md:col-span-3'>
                         <p className='text-sm font-semibold mb-2'>Our Store</p>
-                        <p className='text-sm opacity-85 w-35 md:w-50'>Jl. Senopati VIII No. 22, Kebayoran Baru, Jakarta Selatan</p>
+                        <p className='text-sm opacity-85 w-35 md:w-50'>Jl. Senopati VIII No. 123, Kebayoran Baru, Jakarta Selatan</p>
                     </div>
                     <div className='col-span-6 md:col-span-3'>
                         <p className='text-sm font-semibold mb-2'>Open Hours</p>
@@ -28,7 +28,7 @@ export default function Footer() {
                     </div>
                     <div className='col-span-6 md:col-span-3'>
                         <p className='text-sm font-semibold mb-2'>Social Media</p>
-                        <p className='opacity-85 flex items-center gap-1'>
+                        <p className=' flex items-center gap-1'>
                             <FaSquareFacebook className='text-2xl' />
                             <FaSquareXTwitter className='text-2xl' />
                             <FaSquareInstagram className='text-2xl' />
@@ -38,8 +38,8 @@ export default function Footer() {
                 </div>
 
                 <div className='flex-col md:flex-row flex justify-start md:justify-between items-start md:items-end mt-20'>
-                    <p className='text-5xl font-bold -tracking-[3px]'>CRUMBLY</p>
-                    <p className='text-sm opacity-50 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
+                    <p className='text-4xl font-bold -tracking-[1px] text-primary'>Crumbly</p>
+                    <p className='text-sm opacity-80 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
                 </div>
             </div>
         </div>

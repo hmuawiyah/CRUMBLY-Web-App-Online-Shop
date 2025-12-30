@@ -16,6 +16,8 @@ import { LuShoppingCart, LuSearch } from 'react-icons/lu'
 import { FaStar } from 'react-icons/fa6'
 import { cancelOrder, readAllOrders } from '@/service/order.service'
 import { Link } from 'react-router-dom'
+import { Skeleton } from '../ui/skeleton'
+import { toLocalDate, toTitleCase } from '@/helper/simpleFn'
 
 type itemsProps = {
     id: string,
@@ -49,33 +51,6 @@ type OrderTransactionProps = {
 }
 
 export default function OrderTransaction({ orders, setOrders }: OrderTransactionProps) {
-    // const [orders, setOrders] = useState<orderProps[]>([])
-
-
-    const toCapitalize = (val: string) => {
-        val = val.toLowerCase()
-        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-    }
-
-    const toLocalDate = (dateString: string): string => {
-        const date = new Date(dateString);
-
-        return date.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-        });
-    }
-
-    const toTitleCase = (val: string = ''): string => {
-        return val
-            .toLowerCase()
-            .split(' ')
-            .map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1)
-            )
-            .join(' ')
-    }
 
     const handleCancelOrder = async (id: string) => {
         const jwtToken = localStorage.getItem('token')
@@ -91,16 +66,24 @@ export default function OrderTransaction({ orders, setOrders }: OrderTransaction
                         ? { ...o, status: 'CANCELED' }
                         : o
                 )
-            );
-
+            )
         } catch (error) {
             console.log('Error: ' + error)
         }
     }
 
+    const handleOrderExpired = (orderId: string) => {
+        setOrders(prev =>
+            prev.map(order =>
+                order.id === orderId
+                    ? { ...order, status: 'CANCELED' }
+                    : order
+            )
+        )
+    }
+
     return (
         <>
-            {/* <Button onClick={() => { alert(orders); console.log(orders) }}>realAllOrders</Button> */}
             {orders?.map((order, i) => (
                 <Card key={i} className="w-full md:w-[75%] mt-7 gap-0">
                     <CardHeader className='gap-0 pb-2 md:pb-4'>
@@ -136,8 +119,7 @@ export default function OrderTransaction({ orders, setOrders }: OrderTransaction
                         </div>
                         <div className='flex flex-col md:flex-row items-center gap-3'>
                             {(order.status == 'COMPLETED') && <Button variant='outline' className='font-normal'> <LuShoppingCart /> Buy Again </Button>}
-                            {(order.status == 'WAITING PAYMENT') && <PayButtonTokenOnly token={order.midtransToken} />}
-                            {/* {(order.status == 'WAITING PAYMENT') && <Button variant={'outlineDestructive'} onClick={() => handleCancelOrder(order.id)}>Canceled</Button>} */}
+                            {(order.status == 'WAITING PAYMENT') && <PayButtonTokenOnly midtransToken={order.midtransToken} onExpired={handleOrderExpired} />}
                         </div>
                     </CardFooter>
                 </Card>
@@ -158,3 +140,40 @@ export const NoDataOrderTransaction = () => (
         </CardContent>
     </Card>
 )
+
+export const LazyOrderTransaction = () => {
+
+    return (
+        <Card className="w-full md:w-[75%] mt-7 gap-0">
+            <CardHeader className='gap-0 pb-2 md:pb-4'>
+                <div className='flex justify-between opacity-50'>
+                    <Skeleton className='w-35 h-4 bg-gray-300 rounded-full' />
+
+                    <Skeleton className='w-35 h-4 bg-gray-300 rounded-full' />
+                </div>
+            </ CardHeader>
+
+            <CardContent className='gap-0 px-2 md:px-4'>
+                <div className="flex py-3">
+                    <Skeleton className='aspect-1/1 w-20 h-fit bg-gray-300 rounded-lg mr-3' />
+                    <div className='flex flex-col justify-between w-full'>
+                        <div>
+                            <Skeleton className='w-40 h-4 bg-gray-300 rounded-full' />
+                            <Skeleton className='w-20 h-4 bg-gray-300 rounded-full mt-2' />
+                        </div>
+                        <div className='flex justify-end'>
+                            <Skeleton className='w-30 h-4 bg-gray-300 rounded-full' />
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+
+            <hr className="my-3 border border-gray-200" />
+
+            <CardFooter className="flex justify-between gap-2">
+                <Skeleton className='w-40 h-6 bg-gray-300 rounded-full' />
+                <Skeleton className='w-40 h-6 bg-gray-300 rounded-full' />
+            </CardFooter>
+        </Card>
+    )
+}

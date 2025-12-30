@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useMidtransSnap } from '@/service/midtrans.service'
-import { createOrder } from '@/service/order.service'
+import { cancelOrder, checkExpiredOrder, createOrder } from '@/service/order.service'
 import useCartStore from '@/store/cart.store'
 import { LuCirclePlus, LuCircleMinus, LuTrash2, LuShoppingCart, LuChevronDown } from 'react-icons/lu'
+import { useParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 type UserAddress = {
     id: string
@@ -30,26 +32,23 @@ export const PayButton = ({ selectAddress, notes }: PayButton) => {
 
     const handlePay = async () => {
         if (!isSnapReady || !window.snap) {
-            alert('Payment system is not ready')
+            toast.error('Payment system is not ready')
             return
         }
 
         const jwtToken = localStorage.getItem('token')
         if (!jwtToken) {
-            alert('User not authenticated')
+            toast.error('User not authenticated')
             return
         }
 
         try {
             setLoading(true)
-            // alert('setelah setLoading')
             const payloadItems = cartItems.map(i => ({
                 productId: i.id,
                 quantity: i.qty
             }))
-            // alert('setelah payloadItems')
 
-            // console.log('yang akan dikirim ' + jwtToken + ' : ' + JSON.stringify(payloadItems) + ' : ' + JSON.stringify(selectAddress) + ' : ' + notes)
 
             const res = await createOrder(
                 jwtToken,
@@ -57,13 +56,13 @@ export const PayButton = ({ selectAddress, notes }: PayButton) => {
                 selectAddress,
                 notes,
             )
-            // alert('setelah res')
 
-            let token = res.data.transactionToken
+            let midtransToken = res.data.transactionToken
 
-            window.snap.pay(token, {
+            window.snap.pay(midtransToken, {
                 onSuccess: (result) => {
                     console.log('SUCCESS', result)
+                    toast.success('Payment success')
                 },
                 onPending: (result) => {
                     console.log('PENDING', result)
@@ -76,10 +75,9 @@ export const PayButton = ({ selectAddress, notes }: PayButton) => {
                 },
             })
 
-            // alert('setelah snap')
         } catch (err) {
             console.error(err)
-            alert('Payment failed' + err)
+            toast.error('Payment failed')
         } finally {
             setLoading(false)
         }
@@ -97,48 +95,61 @@ export const PayButton = ({ selectAddress, notes }: PayButton) => {
 }
 
 type PayButtonTokenOnlyProps = {
-    token: string,
+    midtransToken: string
+    onExpired: (orderId: string) => void
 }
 
-export const PayButtonTokenOnly = ({ token }: PayButtonTokenOnlyProps) => {
+export const PayButtonTokenOnly = ({ midtransToken, onExpired }: PayButtonTokenOnlyProps) => {
+
     const isSnapReady = useMidtransSnap()
     const [loading, setLoading] = useState(false)
 
     const handlePay = async () => {
         if (!isSnapReady || !window.snap) {
-            alert('Payment system is not ready')
+            toast.error('Payment system is not ready')
             return
         }
 
         const jwtToken = localStorage.getItem('token')
         if (!jwtToken) {
-            alert('User not authenticated')
+            toast.error('User not authenticated')
             return
         }
 
         try {
             setLoading(true)
 
-            // let token = ''
-            window.snap.pay(token, {
+            const res = await checkExpiredOrder(jwtToken, midtransToken)
+            if (res.data.isExpired) {
+                setLoading(false)
+                onExpired(res.data.orderId)
+                toast.error('Payment has expired')
+                return
+            }
+
+            window.snap.pay(midtransToken, {
                 onSuccess: (result) => {
                     console.log('SUCCESS', result)
+                    toast.success('Payment success')
+                    window.location.replace("/")
                 },
                 onPending: (result) => {
                     console.log('PENDING', result)
+                    window.location.replace("/")
                 },
                 onError: (result) => {
                     console.log('ERROR', result)
+                    window.location.replace("/transaction")
                 },
                 onClose: () => {
                     console.log('POPUP CLOSED')
+                    window.location.replace("/")
                 },
             })
 
-            // alert('setelah snap')
         } catch (err) {
             console.error(err)
-            alert('Payment failed' + err)
+            toast.error('Payment failed')
         } finally {
             setLoading(false)
         }
@@ -147,7 +158,6 @@ export const PayButtonTokenOnly = ({ token }: PayButtonTokenOnlyProps) => {
     return (
         <Button
             onClick={handlePay}
-            // disabled={!isSnapReady || loading || cartItems.length === 0 || selectAddress == null}
             className="px-4 py-2 w-auto"
         > <LuShoppingCart />
             {loading ? 'Processing...' : 'Resume Pay'}
@@ -155,4 +165,3 @@ export const PayButtonTokenOnly = ({ token }: PayButtonTokenOnlyProps) => {
     )
 }
 
-// export default PayButton

@@ -1,8 +1,8 @@
 import React, { useState, ReactNode, useEffect } from 'react'
 
+import ProductCard, { LazyProductCard } from '@/components/PageHome/ProductCard'
+import FeatureContent from '@/components/PageHome/FeatureContent'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import ProductCard, { LazyProductCard } from '@/components/ProductCard'
-import FeatureContent from '@/components/FeatureContent'
 import { Button } from '@/components/ui/button'
 
 import { LuShoppingCart, LuChefHat, LuBadgeCheck, LuAward, LuTruck } from 'react-icons/lu'
@@ -55,6 +55,7 @@ export default function Home() {
             <Button
               variant={radioFilter == item ? 'outline' : 'ghost'}
               size='lg'
+              key={i}
               onClick={() => {
                 setRadioFilter(item)
                 item == 'Fresh Arrivals' ? setFilteredDataProduct(dataProduct) : ''
@@ -63,7 +64,7 @@ export default function Home() {
                 // setDataProduct() 
               }}
               className={radioFilter == item
-                ? 'border border-primary rounded-full opacity-100'
+                ? 'border border-primary font-semibold rounded-full opacity-100'
                 : 'rounded-full opacity-40'
               }
             >
@@ -80,20 +81,21 @@ export default function Home() {
               <LazyProductCard />
             ))
             : filteredDataProduct.map((product) => (
-              <ProductCard key={product.id} id={product.id} name={product.name} price={product.price} description={product.description} />
+              <ProductCard key={product.id} id={product.id} imageUrl={product.imageUrl} name={product.name} price={product.price} description={product.description} />
             ))
           }
         </div>
       </div>
 
       <div className='flex justify-center items-center'>
-        <div className='w-[70%] aspect-3/1 h-auto bg-gray-400 rounded-lg mt-40'>
+        {/* <div className='w-full md:w-[70%] aspect-3/1 h-auto bg-gray-400 rounded-lg mt-40'>
           Ads Delivery
-        </div>
+        </div> */}
+        <img src='/images/ads-3.jpg' alt='/images/ads-3.jpg' className='w-full md:w-[70%] aspect-3/1 h-auto rounded-xl mt-20 md:mt-40' />
       </div>
 
-      <div className='flex justify-center mt-40'>
-        <div className='flex flex-wrap md:flex-nowrap justify-center items-center w-[100%] gap-4'>
+      <div className='flex justify-center mt-20 md:mt-40'>
+        <div className='flex flex-wrap md:flex-nowrap justify-center items-center w-[100%] gap-4 text-muted-foreground'>
           <FeatureContent icon={<LuChefHat strokeWidth={1.5} className='w-7! h-7! md:w-9! md:h-9!' />} text1="Always Freshly" text2="Baked" />
           <FeatureContent icon={<LuBadgeCheck strokeWidth={1.5} className='w-7! h-7! md:w-9! md:h-9!' />} text1="High-Quality" text2="Standards" />
           <FeatureContent icon={<LuAward strokeWidth={1.5} className='w-7! h-7! md:w-9! md:h-9!' />} text1="Two Decades" text2="of Quality" />

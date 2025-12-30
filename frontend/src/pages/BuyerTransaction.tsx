@@ -1,11 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { LuChevronDown } from "react-icons/lu"
-// import { LuShoppingCart, LuSearch } from 'react-icons/lu'
-// import { FaStar } from 'react-icons/fa6'
+import OrderTransaction, { NoDataOrderTransaction, LazyOrderTransaction } from '@/components/PageTransaction/OrderTransaction'
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import OrderTransaction, { NoDataOrderTransaction } from '@/components/OrderTransaction'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,7 +14,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+
 import { readAllOrders, readAllOrdersBuyer } from '@/service/order.service'
+
+import { LuChevronDown } from "react-icons/lu"
+
+import { toTitleCase } from '@/helper/simpleFn'
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
@@ -51,6 +53,7 @@ export default function BuyerTransaction() {
     const [radioFilter, setRadioFilter] = useState<string>('ALL')
     const categoriesStatus: string[] = ['ALL', 'WAITING PAYMENT', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'CANCELED']
     const [orders, setOrders] = useState<orderProps[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     const [sortedBy, setSortedBy] = useState<string>('LASTEST')
     const sortedItems: string[] = ['LASTEST', 'OLDEST', 'HIGHEST PRICE', 'LOWEST PRICE']
@@ -59,7 +62,7 @@ export default function BuyerTransaction() {
 
         const jwtToken = localStorage.getItem('token')
         if (!jwtToken) return
-        
+
         readAllOrdersBuyer(jwtToken)
             .then(res => {
                 setOrders(res.data.orders)
@@ -67,21 +70,9 @@ export default function BuyerTransaction() {
             .catch(error => {
                 console.log('Error: ' + error)
             })
+            .finally(() => setIsLoading(false))
 
     }, [])
-
-    const toTitleCase = (val: string = ''): string => {
-        return val
-            .toLowerCase()
-            .split(' ')
-            .map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1)
-            )
-            .join(' ')
-    }
-
-    // let selectedCategory = "All";
-    // let sortOrder = "oldest";
 
     const applyFilterSort = () => {
         let filteredOrders = [...orders]
@@ -165,12 +156,12 @@ export default function BuyerTransaction() {
                 </DropdownMenu>
             </div>
 
-            <OrderTransaction orders={filteredOrders} setOrders={setOrders} />
+            {isLoading && <LazyOrderTransaction />}
 
-            {(filteredOrders.length == 0) && <NoDataOrderTransaction />}
+            {!isLoading && <OrderTransaction orders={filteredOrders} setOrders={setOrders} />}
+
+            {!isLoading && (filteredOrders.length == 0) && <NoDataOrderTransaction />}
 
         </>
     )
 }
-
-

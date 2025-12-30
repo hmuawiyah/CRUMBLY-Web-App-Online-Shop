@@ -118,6 +118,45 @@ type OrderSummaryProps = {
   totalPrice: number
 }
 
+export const LazyOrderSummary = () => (
+  <>
+    <Card className='flex gap-3 sticky top-20! overflow-hidden'>
+      <CardHeader>
+        {/* <CardTitle>Order Summary</CardTitle> */}
+        <Skeleton className='w-35 h-6 bg-gray-300 rounded-full' />
+        <table className='text-sm w-full table-fixed'>
+          <tbody>
+            <tr className='border-b '>
+              <td className='py-1 w-[70%]'><Skeleton className='w-3/4 h-4 bg-gray-300 rounded-full' /></td>
+              <td className='w-[30%]'><Skeleton className='w-full h-4 bg-gray-300 rounded-full' /></td>
+            </tr>
+            <tr className=''>
+              <td className='py-1 w-[70%]'><Skeleton className='w-3/4 h-4 bg-gray-300 rounded-full' /></td>
+              <td className='w-[30%]'><Skeleton className='w-full h-4 bg-gray-300 rounded-full' /></td>
+            </tr>
+          </tbody>
+        </table>
+        {/* <CardDescription className='mt-5'>Total Rp 200.000</CardDescription> */}
+        <CardDescription className='mt-5'><Skeleton className='w-45 h-6 bg-gray-300 rounded-full' /></CardDescription>
+      </CardHeader>
+      <CardFooter className='flex-col gap-5'>
+        {/* <Button className='w-full'>Pay Button</Button> */}
+        <Skeleton className='w-full h-8 bg-gray-300 rounded-full' />
+        <div className='w-full'>
+          {/* <label htmlFor='address'> Address </label> */}
+          <Skeleton className='w-25 h-4 bg-gray-300 rounded-full' />
+          <Skeleton className='w-full h-8 bg-gray-300 rounded-full mt-3' />
+          <Skeleton className='w-25 h-4 bg-gray-300 rounded-full mt-3' />
+          <Skeleton className='w-full h-8 bg-gray-300 rounded-full mt-3' />
+          {/* <div className='w-full flex-1' id='address'>
+            <Button className='w-full'>Choose Address</Button>
+          </div> */}
+        </div>
+      </CardFooter>
+    </Card>
+  </>
+)
+
 export default function OrderSummary({ cartViewData, totalPrice }: OrderSummaryProps) {
   const [notes, setNotes] = useState<string>('')
   // const [selectAddress, setSelectAddress] = useState<UserAddress>('')

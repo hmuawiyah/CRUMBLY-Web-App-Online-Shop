@@ -19,6 +19,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {children}
       </PageWrapper>
 
+<div className="mt-40"></div>
       <Footer />
       <NavbarBottom />
     </>

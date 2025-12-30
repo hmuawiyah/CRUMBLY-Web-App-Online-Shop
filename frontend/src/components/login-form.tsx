@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@/service/auth.service'
+import toast from 'react-hot-toast'
 
 import { cn } from '@/lib/utils'
 
@@ -30,7 +31,7 @@ export function LoginForm({
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [showPass, setShowPass] = useState<boolean>(false)
-  
+
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,15 +39,17 @@ export function LoginForm({
 
     try {
       const res = await login({ email, password })
-
+      
       const token = res.data?.token
       if (!token) { throw new Error('Token not found in response') }
       localStorage.setItem('token', token)
+      toast.success('Login success!')
 
       navigate('/cart')
 
     } catch (error: any) {
       console.log('Error: ' + error.message)
+      toast.error('Email or Password is wrong!')
     }
   }
 
@@ -89,19 +92,19 @@ export function LoginForm({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required /> */}
-                <div className="relative">
+                <div className='relative'>
                   <Input
-                    id="password"
-                    type={showPass ? "text" : "password"}
+                    id='password'
+                    type={showPass ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10"
+                    className='pr-10'
                   />
 
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700'
                   >
                     {showPass ? <LuEye /> : <LuEyeOff />}
                   </button>
