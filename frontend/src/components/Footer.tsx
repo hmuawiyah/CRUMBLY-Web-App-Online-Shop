@@ -45,7 +45,7 @@ export default function Footer() {
                         <Link to={'https://github.com/hmuawiyah'} target='_blank'>
                             <FaGithub /> Github
                         </Link>
-                        <p className='text-sm opacity-80 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
+                        <p className='text-sm opacity-80 mt-2 md:mt-0'>@2025 Husein’s Web App Online Shop</p>
                     </span>
                 </div>
             </div>
