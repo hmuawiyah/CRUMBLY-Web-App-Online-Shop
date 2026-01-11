@@ -4,6 +4,7 @@ import { AiFillFacebook, AiFillTikTok, AiFillInstagram } from "react-icons/ai"
 import { FaGithub } from "react-icons/fa6"
 import { FaSquareFacebook, FaSquareXTwitter, FaSquareInstagram, FaTiktok } from "react-icons/fa6"
 import { Link } from 'react-router-dom'
+import { Button } from './ui/button'
 
 export default function Footer() {
     return (
@@ -43,7 +44,9 @@ export default function Footer() {
                     <p className='text-4xl font-bold -tracking-[1px] text-primary'>Crumbly</p>
                     <span className='flex items-center'>
                         <Link to={'https://github.com/hmuawiyah'} target='_blank'>
-                            <FaGithub /> Github
+                            <Button variant={'outline'} size={'sm'} className='flex items-center gap-2'>
+                                <FaGithub /> Github
+                            </Button>
                         </Link>
                         <p className='text-sm opacity-80 mt-2 md:mt-0'>@2025 Husein’s Web App Online Shop</p>
                     </span>
