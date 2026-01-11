@@ -1,7 +1,9 @@
 import React from 'react'
 import { Icon } from "@iconify/react"
-import { AiFillFacebook, AiFillTikTok, AiFillInstagram } from "react-icons/ai";
+import { AiFillFacebook, AiFillTikTok, AiFillInstagram } from "react-icons/ai"
+import { FaGithub } from "react-icons/fa6"
 import { FaSquareFacebook, FaSquareXTwitter, FaSquareInstagram, FaTiktok } from "react-icons/fa6"
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
     return (
@@ -39,7 +41,12 @@ export default function Footer() {
 
                 <div className='flex-col md:flex-row flex justify-start md:justify-between items-start md:items-end mt-20'>
                     <p className='text-4xl font-bold -tracking-[1px] text-primary'>Crumbly</p>
-                    <p className='text-sm opacity-80 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
+                    <span className='flex items-center'>
+                        <Link to={'https://github.com/hmuawiyah'} target='_blank'>
+                            <FaGithub /> Github
+                        </Link>
+                        <p className='text-sm opacity-80 mt-2 md:mt-0'>@ 2025 Sample Project Web App Online Shop</p>
+                    </span>
                 </div>
             </div>
         </div>
