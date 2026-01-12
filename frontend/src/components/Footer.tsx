@@ -40,11 +40,11 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className='flex-col md:flex-row flex justify-start md:justify-between items-start md:items-end mt-20'>
+                <div className='flex-col md:flex-row flex justify-start md:justify-between items-start md:items-end mt-20 gap-4'>
                     <p className='text-4xl font-bold -tracking-[1px] text-primary'>Crumbly</p>
-                    <span className='flex items-center'>
-                        <Link to={'https://github.com/hmuawiyah'} target='_blank'>
-                            <Button variant={'outline'} size={'sm'} className='flex items-center gap-2'>
+                    <span className='flex flex-col md:flex-row items-center gap-0 md:gap-2'>
+                        <Link to={'https://github.com/hmuawiyah'} target='_blank' className='w-full md:w-auto'>
+                            <Button variant={'link'} size={'sm'} className='flex items-center gap-2 px-0!'>
                                 <FaGithub /> Github
                             </Button>
                         </Link>
