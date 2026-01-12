@@ -13,7 +13,7 @@ const LoginSignUpLayout: React.FC<LoginSignUpLayoutProps> = ({ children }) => {
   return (
     <>
       <Navbar />
-
+      
       <PageWrapper>
         {children}
       </PageWrapper>
