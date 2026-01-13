@@ -155,11 +155,11 @@ export default function DataDetailOrder({ order, setOrder, feeShipping }: DataDe
                             <tbody className='[&_td]:py-2 [&_tr]:border-b'>
                                 <tr>
                                     <td className='font-medium'>Shipping Service</td>
-                                    <td>JNT</td>
+                                    <td>{order?.shippingService || '-'}</td>
                                 </tr>
                                 <tr>
                                     <td className='font-medium'>Tracking Number</td>
-                                    <td className='flex gap-1 items-center cursor-pointer underline'>JNT1234567890 <LuCopy /></td>
+                                    <td className='flex gap-1 items-center'>{order?.trackingNumber && (<LuCopy />) || '-'} </td>
                                 </tr>
                                 <tr>
                                     <td className='flex items-start font-medium w-1/2'>Address</td>

@@ -30,7 +30,7 @@ type itemsProps = {
     quantity: number,
     subtotal: number,
     unitPrice: number,
-    product: { name: string }
+    product: { name: string, image: string }
 }
 
 type orderProps = {

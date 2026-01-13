@@ -78,9 +78,7 @@ export default function OrderCart({ item, onQty, onRemove, onToggle }: Props) {
           />
 
           <div className='flex-1 flex gap-3'>
-            <div className='aspect-square w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400'>
-              IMG
-            </div>
+            <img className="w-20 h-20 aspect-square object-center object-cover rounded-lg" src={item.image} alt={item.name} />
             <div className='flex flex-col justify-between w-full'>
               <div>
                 <CardTitle>{item.name}</CardTitle>
