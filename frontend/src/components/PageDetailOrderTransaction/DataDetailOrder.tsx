@@ -27,7 +27,7 @@ type itemsProps = {
     quantity: number,
     subtotal: number,
     unitPrice: number,
-    product: { name: string }
+    product: { name: string, imageUrl: string }
 }
 
 type orderProps = {
@@ -100,8 +100,8 @@ export default function DataDetailOrder({ order, setOrder, feeShipping }: DataDe
                 {order?.items.map((item: itemsProps) => (
                     <>
                         <CardContent className='gap-0 px-2 md:px-4'>
-                            <div className='flex py-3'>
-                                <div className='aspect-1/1 w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400 mr-3'> IMG </div>
+                            <div className='flex py-3 gap-3'>
+                                <img className="w-20 h-20 aspect-square object-center object-cover rounded-lg" src={item.product.imageUrl} alt={item.product.name} />
                                 <div className='flex flex-col justify-between w-full'>
                                     <div>
                                         <CardTitle>{item.product.name}</CardTitle>

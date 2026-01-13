@@ -96,7 +96,7 @@ export default function OrderTransaction({ orders, setOrders }: OrderTransaction
                     {order.items.map((item, i) => (
                         <>
                             <CardContent key={i} className='gap-0 px-2 md:px-4'>
-                                <div className="flex py-3">
+                                <div className="flex py-3 gap-3">
                                     {/* <Button onClick={() => alert(JSON.stringify(item.product))}>product</Button> */}
                                     <img className="w-20 h-20 aspect-square object-center object-cover rounded-lg" src={item.product.imageUrl} alt={item.product.name} />
                                     <div className='flex flex-col justify-between w-full'>

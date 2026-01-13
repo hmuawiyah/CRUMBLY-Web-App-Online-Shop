@@ -237,7 +237,8 @@ export const readAllOrdersBuyer = async (req, res) => {
                     include: {
                         product: {
                             select: {
-                                name: true
+                                name: true,
+                                imageUrl: true
                             }
                         }
                     }
