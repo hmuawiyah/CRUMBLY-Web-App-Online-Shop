@@ -1,6 +1,6 @@
 # CRUMBLY — Online Shop Web App
 
-!(thumbnail)[https://github.com/hmuawiyah/CRUMBLY-Web-App-Online-Shop/blob/main/screenshot/Thumbnail.png?raw=true]
+![thumbnail](https://github.com/hmuawiyah/CRUMBLY-Web-App-Online-Shop/blob/main/screenshot/Thumbnail.png?raw=true)
 
 CRUMBLY is a web application for an online bakery that supports multiple payment methods with automatic verification to ensure all transactions are properly recorded.  
 
