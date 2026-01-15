@@ -1,9 +1,14 @@
 # CRUMBLY — Online Shop Web App
 
+!(thumbnail)[https://github.com/hmuawiyah/CRUMBLY-Web-App-Online-Shop/blob/main/screenshot/Thumbnail.png?raw=true]
+
 CRUMBLY is a web application for an online bakery that supports multiple payment methods with automatic verification to ensure all transactions are properly recorded.  
+
 The application also provides order status tracking based on progress, authentication using JSON Web Token (JWT), profile management, a shopping cart for bulk orders, and a fully responsive interface for both mobile and desktop devices.
 
----
+
+
+
 
 ## Tech Stack
 - React
@@ -17,7 +22,9 @@ The application also provides order status tracking based on progress, authentic
 - Prisma
 - JSON Web Token (JWT)
 
----
+
+
+
 
 ## Features
 
@@ -47,19 +54,25 @@ The application also provides order status tracking based on progress, authentic
 ### Search
 - Search feature to make it easier to find orders
 
----
+
+
+
 
 ## Development Duration
 ⏱️ Approximately **1 month**
 
----
+
+
+
 
 ## What I Learned
 - As applications grow in complexity, backend security must receive greater attention
 - Managing global state effectively using Zustand
 - Designing and structuring database tables clearly according to application requirements
 
----
+
+
+
 
 ## Live Demo
 👉 https://crumbly-bread.vercel.app/
